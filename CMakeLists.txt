@@ -21,7 +21,7 @@ set (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
 
 set (CMAKE_SHARED_LINKER_FLAGS "-v -lboost_system")
 
-find_package(Boost 1.54.0 REQUIRED COMPONENTS system filesystem)
+find_package(Boost 1.65.0 REQUIRED COMPONENTS system filesystem)
 
 enable_testing()
 add_subdirectory (src)
