@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 
-project (pslib VERSION 0.1.0)
+project (pslib VERSION 0.1.1)
 
 # Set compiler options
 set (CMAKE_C_STANDARD 11)

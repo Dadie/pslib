@@ -57,7 +57,8 @@ namespace pslib::v1_0 {
             // TODO: Error if ostream cant be opend
             size_t writen_bytes = 0;
             for (size_t i = 0; i < size_t(psd.data_count); ++i) {
-                auto s = samples.at(i + size_t(psd.offset));
+                auto index = i + (psd.offset > 0 ? size_t(psd.offset - 1) : 0);
+                auto s = samples.at(index);
                 for (auto& ds : s.values) {
                     psd_file.write(
                         reinterpret_cast< const char* >(&ds), sizeof(ds));
