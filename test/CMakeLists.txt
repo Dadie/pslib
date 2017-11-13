@@ -24,3 +24,4 @@ add_test_helper ("PSLIB_V1_0_SAVE_SAMPLES"  "PSLIB_V1_0_SAVE_SAMPLES"  "./pslib/
 add_test_helper ("PSLIB_V1_0_LOAD_SAMPLES"  "PSLIB_V1_0_LOAD_SAMPLES"  "./pslib/v1_0/test.load_samples.cpp")
 add_test_helper ("PSLIB_V1_0_SAVE_AND_LOAD_SAMPLES"  "PSLIB_V1_0_SAVE_AND_LOAD_SAMPLES"  "./pslib/v1_0/test.save_and_load_samples.cpp")
 add_test_helper ("PSLIB_V1_0_SAVE_AND_LOAD_SAMPLES_3GiB"  "PSLIB_V1_0_SAVE_AND_LOAD_SAMPLES_3GiB"  "./pslib/v1_0/test.save_and_load_samples_3GiB.cpp")
+add_test_helper ("PSLIB_V1_0_SAVE_AND_LOAD_SAMPLES_3GiB_ITER"  "PSLIB_V1_0_SAVE_AND_LOAD_SAMPLES_3GiB_ITER"  "./pslib/v1_0/test.save_and_load_samples_iterator.cpp")

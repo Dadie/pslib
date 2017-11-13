@@ -38,13 +38,13 @@ namespace pslib::v1_0 {
     inline void save_samples(const pslib::v1_0::samples_t& samples,
         const std::string& directory, const std::string& base_name)
     {
-        if (samples.begin > std::chrono::nanoseconds(0)) {
+        if (samples.begin_time > std::chrono::nanoseconds(0)) {
             // TODO: Better Error
             throw std::runtime_error("Given pslib::v1_0::sample_t doesn't "
                                      "begin on 0 and cant be saved to .psd "
                                      "files");
         }
-        if (samples.end != samples.psi.length()) {
+        if (samples.end_time != samples.psi.length()) {
             // TODO: Better Error
             throw std::runtime_error("Given pslib::v1_0::sample_t doesn't end "
                                      "as specified in psi element");

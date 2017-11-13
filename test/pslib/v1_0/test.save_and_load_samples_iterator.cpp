@@ -24,7 +24,6 @@
 // StdLib
 #include <chrono>
 #include <cstdlib>
-#include <iostream>
 
 // Own
 #include <pslib/pslib_v1_0.h>
@@ -34,10 +33,10 @@ int main(int argc, char* argv[])
 
     auto psi = pslib::v1_0::psi_t();
     {
-        psi.filename = "./test.save_and_load_samples_3gib.psi";
+        psi.filename = "./test.save_and_load_samples_iter.psi";
         psi.checksum = 0;
         psi.sampling_rate = 1000;  // 1000 Hz
-        psi.sampling_count = 1500; // 1024 Samples
+        psi.sampling_count = 1024; // 1024 Samples
 
         // Add Probe
         auto probe = pslib::v1_0::probe_t();
@@ -54,47 +53,32 @@ int main(int argc, char* argv[])
         }
         psi.probes.push_back(probe);
 
-        auto psd_1 = pslib::v1_0::psd_t();
+        // Add PSDFiles
+        // A .psd file has a size of 1GiB and can hold
+        // Size of Sample = Number of Probes * 2 * 8 + Number of Probes * 2 +
+        // Number of Probes
+        // Maximum number of samples per psd = Size of Sample /
+        // (1*1024*1024*1024)
+        //
+        // In this example:
+        // Number of Probes = 1
+        // Size of Sample = 19 (Byte)
+        // Maximum number of samples per psd = ~17,695,128,917
+        auto psd = pslib::v1_0::psd_t();
         {
-            psd_1.id = 1;     // id needs to be > 1 to be valid
-            psd_1.offset = 0; // Sum of data_count of each psd with a smaller id
-            psd_1.data_count = 500; // Number of Samples in this psd file
-            psd_1.event_count =
-                0; // Number of events with event happend flag set
+            psd.id = 1;     // id needs to be > 1 to be valid
+            psd.offset = 0; // Sum of data_count of each psd with a smaller id
+            psd.data_count = 1024; // Number of Samples in this psd file
+            psd.event_count = 0; // Number of events with event happend flag set
         }
-        psi.psds.push_back(psd_1);
-
-        auto psd_2 = pslib::v1_0::psd_t();
-        {
-            psd_2.id = 2; // id needs to be > 1 to be valid
-            psd_2.offset =
-                psd_1.data_count + 1; // Sum of data_count of each psd
-                                      // with a smaller id
-            psd_2.data_count = 500;   // Number of Samples in this psd file
-            psd_2.event_count =
-                0; // Number of events with event happend flag set
-        }
-        psi.psds.push_back(psd_2);
-
-        auto psd_3 = pslib::v1_0::psd_t();
-        {
-            psd_3.id = 3; // id needs to be > 1 to be valid
-            psd_3.offset = psd_2.offset + psd_2.data_count; // Sum of data_count
-                                                            // of each psd with
-                                                            // a smaller id
-            psd_3.data_count = 500; // Number of Samples in this psd file
-            psd_3.event_count =
-                0; // Number of events with event happend flag set
-        }
-        psi.psds.push_back(psd_3);
+        psi.psds.push_back(psd);
     }
 
     // write psi to file
-    pslib::v1_0::save_psi(psi, "./", "test.save_and_load_samples_3gib");
+    pslib::v1_0::save_psi(psi, "./", "test.save_and_load_samples_iter");
 
     // validate psi
     if (!pslib::v1_0::validate_psi(psi)) {
-        std::cout << "Invalid PSI " << psi.filename << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -121,44 +105,23 @@ int main(int argc, char* argv[])
     }
 
     // write samples to psds
-    pslib::v1_0::save_samples(samples, "./", "test.save_and_load_samples_3gib");
+    pslib::v1_0::save_samples(samples, "./", "test.save_and_load_samples_iter");
 
     auto loaded_psi =
-        pslib::v1_0::load_psi("./test.save_and_load_samples_3gib.psi");
+        pslib::v1_0::load_psi("./test.save_and_load_samples_iter.psi");
     if (loaded_psi != psi) {
-        std::cout << "Loaded psi is not the same as generated psi "
-                  << std::endl;
         return EXIT_FAILURE;
     }
 
     auto loaded_samples = pslib::v1_0::load_samples(loaded_psi);
-    if (loaded_samples != samples) {
-        std::cout << "Samples are not the same" << std::endl;
-        std::cout << "samples.size()         " << samples.size() << std::endl;
-        std::cout << "loaded_samples.size()  " << samples.size() << std::endl;
-        std::cout << "samples.begin          " << samples.begin_time.count()
-                  << std::endl;
-        std::cout << "loaded_samples.begin() " << samples.begin_time.count()
-                  << std::endl;
-        std::cout << "samples.end            " << samples.end_time.count()
-                  << std::endl;
-        std::cout << "loaded_samples.end     " << samples.end_time.count()
-                  << std::endl;
-        for (size_t i = 0; i < samples.values.size(); ++i) {
-            if (loaded_samples.values.at(i) != samples.values.at(i)) {
-                std::cout << "First Value Diff Found on Index " << i
-                          << std::endl;
-                break;
-            }
+    auto it = samples.begin();
+    for (auto s : loaded_samples) {
+        if (s != *it) {
+            return EXIT_FAILURE;
         }
-        for (size_t i = 0; i < samples.events.size(); ++i) {
-            if (loaded_samples.events.at(i) != samples.events.at(i)) {
-                std::cout << "First Event Diff Found on Index " << i
-                          << std::endl;
-                break;
-            }
-        }
-
+        it++;
+    }
+    if (it != samples.end()) {
         return EXIT_FAILURE;
     }
 
