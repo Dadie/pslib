@@ -24,7 +24,7 @@ This is an open source library to read and write Hitex PowerScale (.psi/.psd) fi
 The simplest way to include this library to your project is by adding it as a gitsubmodule to your project.
 
 ```bash
-git submodule add git@github.com:dadie/pslib.git 3rdparty/pslib
+git submodule add git@github.com:MeasureTools/pslib.git 3rdparty/pslib
 ```
 
 Then add *pslib* or *pslib_s* to your CMake *target_link_libraries* and then include the wished pslib.h in your source code.
