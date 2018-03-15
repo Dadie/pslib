@@ -4,7 +4,7 @@
     - [Getting Started](#getting-started)
         - [Prerequisites](#prerequisites)
     - [How to load a .psi file](#how-to-load-a-psi-file)
-    - [How to load the measurment data from a .psd file](#how-to-load-the-measurment-data-from-a-psd-file)
+    - [How to load the measurement data from a .psd file](#how-to-load-the-measurement-data-from-a-psd-file)
     - [How to write a .psi file](#how-to-write-a-psi-file)
     - [How to write .psd files](#how-to-write-psd-files)
     - [Running the tests](#running-the-tests)
@@ -36,13 +36,13 @@ For example, to include the pslib for the psi/psd version 1.0 format use
 
 ### Prerequisites
 
-This library requires [```boost```](http://www.boost.org/doc/libs/) and was testet with version **1.65**. It may work with earlier versions.
+This library requires [```boost```](http://www.boost.org/doc/libs/) and was tested with version **>=1.65**. It may work with earlier versions.
 
 ## How to load a .psi file
 
 A *.psi* file can be loaded with the function ```pslib::v1_0::psi_t pslib::v1_0::load_psi(std::string)```.
-This will only load the *.psi* file and **WONT** acctually load the measurement data from the *.psd* files.
-To load those see [How to load the measurment data from a .psd file](#how-to-load-the-measurment-data-from-a-psd-file)
+This will only load the *.psi* file and **WONT** actually load the measurement data from the *.psd* files.
+To load those see [How to load the measurement data from a .psd file](#how-to-load-the-measurement-data-from-a-psd-file)
 
 ```cpp
 #include <pslib/pslib_v1_0.h>
@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-## How to load the measurment data from a .psd file
+## How to load the measurement data from a .psd file
 
 ```cpp
 #include <pslib/pslib_v1_0.h>
@@ -113,8 +113,9 @@ int main(int argc, char* argv[]) {
 ## How to write a .psi file
 
 ```cpp
-#include <cstdlib>
 #include <pslib/pslib_v1_0.h>
+#include <limits>
+#include <cstdlib>
 
 int main(int argc, char* argv[])
 {
@@ -124,7 +125,7 @@ int main(int argc, char* argv[])
         psi.filename = "example.psi";
         psi.checksum = 0;
         psi.sampling_rate = 1000;    // 1000 Hz
-        psi.sampling_count = 1024; // 1024 Samples
+        psi.sampling_count = 1024;   // 1024 Samples
 
         // Add Probe
         auto probe = pslib::v1_0::probe_t();
@@ -142,14 +143,14 @@ int main(int argc, char* argv[])
         psi.probes.push_back(probe);
 
         // Add PSDFiles
-        // A .psd file has a size of 1GiB and can hold
-        // Size of Sample = Number of Probes * 2 * 8 + Number of Probes * 2 + Number of Probes
-        // Maximum number of samples per psd = Size of Sample / (1*1024*1024*1024)
+        // A .psd file has a size of 1GiB and can hold a maximum number of 
+        // samples per psd = size_per_sample / 1GiB with
+        // size_per_sample = #probes * 2 * 8 Byte + #probes * 2 Byte + 2 Byte
         //
         // In this example:
-        // Number of Probes = 1
-        // Size of Sample = 19 (Byte)
-        // Maximum number of samples per psd = ~17,695,128,917
+        // #probes = 1
+        // size_per_sample = 19 Byte
+        // maximum number of samples per psd = ~17,695,128,917
         auto psd = pslib::v1_0::psd_t();
         {
             psd.id = 1;     // id needs to be > 1 to be valid
@@ -175,9 +176,9 @@ int main(int argc, char* argv[])
 ## How to write .psd files
 
 ```cpp
+#include <pslib/pslib_v1_0.h>
 #include <cstdlib>
 #include <chrono>
-#include <pslib/pslib_v1_0.h>
 
 int main(int argc, char* argv[])
 {
